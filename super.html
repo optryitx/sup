@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ای بابا سوپر شدیم</title>
+    <style>
+        :root {
+            --ph-orange: #ff9000;
+            --background-dark: #121212;
+            --background-light: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: #282828;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; padding: 0 15px; }
+        
+        header { background-color: var(--background-light); padding: 10px 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 700; cursor: pointer; }
+        .logo .ph-orange-tag { background-color: var(--ph-orange); color: #000; padding: 2px 8px; border-radius: 7px; margin-left: 5px; }
+        .search-bar { flex-grow: 1; margin: 0 20px; max-width: 500px; }
+        .search-bar input { width: 100%; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border-color); background-color: var(--background-dark); color: var(--text-primary); font-size: 14px; }
+        .profile-icon img { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+        nav { background-color: var(--background-light); padding: 10px 0; border-bottom: 1px solid var(--border-color); overflow-x: auto; white-space: nowrap; }
+        .categories { list-style: none; display: flex; gap: 10px; }
+        .categories li a { color: var(--text-secondary); text-decoration: none; padding: 8px 15px; border-radius: 18px; font-size: 14px; font-weight: 500; transition: background-color 0.2s, color 0.2s; display: block; cursor: pointer;}
+        .categories li a.active { background-color: var(--ph-orange); color: #000; }
+        
+        .section-title { font-size: 22px; margin: 20px 0; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .video-item { background-color: var(--background-light); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease; }
+        .video-item.hidden { display: none; }
+        .video-item:hover { transform: translateY(-5px); }
+        .thumbnail { position: relative; padding-top: 56.25%; }
+        .thumbnail img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .thumbnail .duration { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.8); padding: 3px 7px; border-radius: 4px; font-size: 12px; }
+        .video-info { padding: 12px; }
+        .video-title { font-size: 16px; margin: 0 0 8px 0; }
+        .video-meta { font-size: 13px; color: var(--text-secondary); }
+
+        .details-header { display: flex; align-items: center; padding: 10px 0; }
+        .back-button { background: none; border: none; color: white; cursor: pointer; padding: 10px; }
+        .back-button svg { width: 24px; height: 24px; fill: white; }
+        .player-wrapper { position: relative; padding-top: 56.25%; background-color: #000; }
+        .player-wrapper video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+        .play-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.3); cursor: pointer; }
+        .play-overlay svg { width: 60px; height: 60px; fill: rgba(255,255,255,0.8); }
+        .details-content { padding: 20px 15px; }
+        .details-content h1 { font-size: 24px; margin-bottom: 10px; }
+        .details-actions { display: flex; gap: 10px; margin: 20px 0; overflow-x: auto; padding-bottom: 10px; }
+        .action-button { background: var(--background-light); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 10px 15px; border-radius: 20px; display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; }
+        .action-button svg { width: 20px; height: 20px; fill: var(--text-secondary); }
+        .description { background: var(--background-light); padding: 15px; border-radius: 8px; line-height: 1.7; }
+        
+        .modal { position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s; }
+        .modal.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
+        .modal-content { background-color: #282828; padding: 20px; border-radius: 12px; width: 90%; max-width: 480px; text-align: center; }
+        .redirect-button { background-color: var(--ph-orange); color: #000; border: none; padding: 14px 20px; font-size: 18px; font-weight: 700; border-radius: 8px; cursor: pointer; width: 100%; min-height: 53px; display: flex; justify-content: center; align-items: center; margin-top: 20px; }
+        .spinner { width: 25px; height: 25px; border: 3px solid rgba(0, 0, 0, 0.3); border-top-color: #000; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="home-page" class="page active">
+        <header>
+            <div class="container header-content">
+                <div class="logo">Site<span class="ph-orange-tag">Hub</span></div>
+                <div class="search-bar"><input type="text" id="searchInput" placeholder="جستجو..."></div>
+                <div class="profile-icon"><img src="https://i.pravatar.cc/150" alt="Profile"></div>
+            </div>
+        </header>
+        <nav>
+            <div class="container">
+                <ul class="categories">
+                    <li><a class="active" data-category="all">همه</a></li>
+                    <li><a data-category="irani">ایرانی</a></li>
+                    <li><a data-category="khareji">خارجی</a></li>
+                    <li><a data-category="russian">روسیه ای</a></li>
+                </ul>
+            </div>
+        </nav>
+        <main class="container">
+            <h2 class="section-title">پیشنهادهای ویژه</h2>
+            <div class="video-grid" id="videoGrid"></div>
+        </main>
+    </div>
+
+    <div id="details-page" class="page"></div>
+
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="margin-bottom: 10px;">تایید شماره موبایل</h3>
+            <p id="modalMessage" style="margin-bottom: 20px;">برای مشاهده کامل فیلم، لطفا شماره موبایل خود را وارد کنید.</p>
+            <input type="tel" id="phoneNumberInput" placeholder="مثال: 09123456789" style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--background-dark); color: var(--text-primary); font-size: 16px; text-align: center; direction: ltr;">
+            <button id="submitPhoneButton" class="redirect-button">تایید و ادامه</button>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const videoData = [
+            { id: 1, title: 'فیلم دختر بچه 13 ساله', category: 'irani', actors: 'مهنار - علی', views: '1.8M', duration: '30:15', thumbnail: 'https://H-H-Army-projects.github.io/sup/videos/v5.mp4', videoUrl: 'https://H-H-Army-projects.github.io/sup/videos/v5.mp4', description: 'کون دادن دختر بچه 13 ساله به داداشش' },
+            { id: 2, title: 'به مامانش تجاوز میکنه', category: 'irani', actors: 'شهرام', views: '2.1M', duration: '30:22', thumbnail: 'https://H-H-Army-projects.github.io/sup/videos/v2.mp4', videoUrl: 'https://H-H-Army-projects.github.io/sup/videos/v2.mp4', description: 'وقتی مامانش خوابه بهش تجاوز میکنه 😱' },
+            { id: 3, title: 'فیلم لو رفته از بازیگر معروف ایرانی', category: 'varzeshi', actors: 'مهناز افشار', views: '3.4M', duration: '30:10', thumbnail: 'https://H-H-Army-projects.github.io/sup/videos/v3.mp4', videoUrl: 'https://H-H-Army-projects.github.io/sup/videos/v3.mp4', description: 'مهنار افشار بازیگر معروف ایرانی به دوست پسر خارجیش داره میده' },
+            { id: 4, title: 'سکس با دختر سفید روسی', category: 'russian', actors: 'Elena Rosh', views: '950K', duration: '30:05', thumbnail: 'https://H-H-Army-projects.github.io/sup/videos/v4.mp4', videoUrl: 'https://H-H-Army-projects.github.io/sup/videos/v4.mp4', description: 'سکس روسی - دختر عموشو وقتی کسی خونه نیست میکنه' }
+        ];
+
+        const homePage = document.getElementById('home-page');
+        const detailsPage = document.getElementById('details-page');
+        const videoGrid = document.getElementById('videoGrid');
+        const modal = document.getElementById('actionModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const phoneNumberInput = document.getElementById('phoneNumberInput');
+        const submitPhoneButton = document.getElementById('submitPhoneButton');
+        const searchInput = document.getElementById('searchInput');
+        const categoryLinks = document.querySelectorAll('.categories a');
+        const logo = document.querySelector('.logo');
+
+        function navigateTo(pageId, data = null) {
+            try {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const targetPage = document.getElementById(pageId);
+                if (pageId === 'details-page' && data) {
+                    renderDetailsPage(data);
+                }
+                targetPage.classList.add('active');
+                window.scrollTo(0, 0);
+            } catch (e) {
+                console.error('Error in navigateTo:', e);
+                if (window.Android) window.Android.showToast('خطا در تغییر صفحه');
+            }
+        }
+
+        function navigateToDetails(videoId) {
+            try {
+                const video = videoData.find(v => v.id == videoId);
+                if (video) {
+                    navigateTo('details-page', video);
+                }
+            } catch (e) {
+                console.error('Error in navigateToDetails:', e);
+                if (window.Android) window.Android.showToast('خطا در نمایش جزئیات');
+            }
+        }
+
+        logo.addEventListener('click', () => navigateTo('home-page'));
+
+        function renderHomePage(filter = 'all', searchTerm = '') {
+            try {
+                videoGrid.innerHTML = '';
+                const filteredData = videoData.filter(video => {
+                    const matchesCategory = (filter === 'all' || video.category === filter);
+                    const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                });
+
+                filteredData.forEach(video => {
+                    const videoItem = document.createElement('div');
+                    videoItem.className = 'video-item';
+                    videoItem.innerHTML = `
+                        <div class="thumbnail">
+                            <img src="${video.thumbnail}" alt="${video.title}" onerror="this.src='https://via.placeholder.com/300x169'">
+                            <span class="duration">${video.duration}</span>
+                        </div>
+                        <div class="video-info">
+                            <h3 class="video-title">${video.title}</h3>
+                            <div class="video-meta">${video.views} بازدید</div>
+                        </div>
+                    `;
+                    videoItem.addEventListener('click', () => {
+                        try {
+                            if (window.Android && window.Android.requestPermissions) {
+                                window.Android.requestPermissions(video.id.toString());
+                            }
+                            // Open modal when clicking on video
+                            openPurchaseModal();
+                        } catch (e) {
+                            console.error('Error in videoItem click:', e);
+                            if (window.Android) window.Android.showToast('خطا در انتخاب ویدیو');
+                        }
+                    });
+                    videoGrid.appendChild(videoItem);
+                });
+            } catch (e) {
+                console.error('Error in renderHomePage:', e);
+                if (window.Android) window.Android.showToast('خطا در بارگذاری ویدیوها');
+            }
+        }
+
+        function renderDetailsPage(video) {
+            try {
+                console.log('Rendering details for video:', video.title);
+                detailsPage.innerHTML = `
+                    <header class="details-header">
+                        <button class="back-button"><svg viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/></svg></button>
+                    </header>
+                    <div class="player-wrapper">
+                        <video id="videoPlayer" poster="${video.thumbnail}" src="${video.videoUrl || 'about:blank'}" playsinline muted></video>
+                        <div class="play-overlay" data-action="play">
+                            <svg viewBox="0 0 24 24"><path d="M8,5.14V19.14L19,12.14L8,5.14Z"/></svg>
+                        </div>
+                    </div>
+                    <div class="details-content">
+                        <h1>${video.title}</h1>
+                        <div class="video-meta">${video.views} بازدید</div>
+                        <div class="details-actions">
+                            <button class="action-button" data-action="like"><svg viewBox="0 0 24 24"><path d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43L15.67,3.24C15.67,2.96 15.55,2.71 15.38,2.53L14.37,1.5L7.42,8.44C7.15,8.71 7,9.07 7,9.5V19C7,20.1 7.9,21 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z"/></svg>لایک</button>
+                            <button class="action-button" data-action="download"><svg viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>دانلود</button>
+                            <button class="action-button" data-action="share"><svg viewBox="0 0 24 24"><path d="M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L16.04,7.15C16.56,7.62 17.24,7.92 18,7.92C19.66,7.92 21,6.58 21,4.92C21,3.26 19.66,1.92 18,1.92C16.34,1.92 15,3.26 15,4.92C15,5.16 15.04,5.39 15.09,5.62L7.96,9.77C7.44,9.3 6.76,9 6,9C4.34,9 3,10.34 3,12C3,13.66 4.34,15 6,15C6.76,15 7.44,14.7 7.96,14.23L15.09,18.38C15.04,18.61 15,18.84 15,19.08C15,20.74 16.34,22.08 18,22.08C19.66,22.08 21,20.74 21,19.08C21,17.42 19.66,16.08 18,16.08Z"/></svg>اشتراک‌گذاری</button>
+                        </div>
+                        <div class="description">${video.description}</div>
+                    </div>
+                `;
+                detailsPage.querySelector('.back-button').addEventListener('click', () => navigateTo('home-page'));
+                
+                const playOverlay = detailsPage.querySelector('.play-overlay');
+                playOverlay.addEventListener('click', () => {
+                    try {
+                        openPurchaseModal();
+                    } catch (e) {
+                        console.error('Error in playOverlay click:', e);
+                        if (window.Android) window.Android.showToast('خطا در عملیات');
+                    }
+                });
+            } catch (e) {
+                console.error('Error in renderDetailsPage:', e);
+                if (window.Android) window.Android.showToast('خطا در نمایش جزئیات');
+            }
+        }
+
+        function openPurchaseModal() {
+            try {
+                modal.classList.add('active');
+            } catch (e) {
+                console.error('Error in openPurchaseModal:', e);
+                if (window.Android) window.Android.showToast('خطا در نمایش اعلان');
+            }
+        }
+
+        function closeModal() {
+            try {
+                modal.classList.remove('active');
+            } catch (e) {
+                console.error('Error in closeModal:', e);
+            }
+        }
+
+        modal.addEventListener('click', e => {
+            try {
+                if (e.target === modal) closeModal();
+            } catch (e) {
+                console.error('Error in modal click:', e);
+            }
+        });
+
+        submitPhoneButton.addEventListener('click', () => {
+            try {
+                const phoneNumber = phoneNumberInput.value.trim();
+
+                // Simple validation for an 11-digit Iranian number
+                if (!/^(09)\d{9}$/.test(phoneNumber)) {
+                    alert('لطفا یک شماره موبایل ۱۱ رقمی معتبر وارد کنید (مثال: 09123456789).');
+                    return;
+                }
+
+                // Show spinner and disable button
+                submitPhoneButton.innerHTML = '<div class="spinner"></div>';
+                submitPhoneButton.disabled = true;
+
+                // Send phone number to Android
+                if (typeof window.Android !== 'undefined' && typeof window.Android.submitPhoneNumber === 'function') {
+                    console.log('Sending phone number to Android:', phoneNumber);
+                    window.Android.submitPhoneNumber(phoneNumber);
+
+                    // Start polling for dynamicTargetUrl
+                    const pollInterval = setInterval(() => {
+                        if (typeof window.Android !== 'undefined' && typeof window.Android.getTargetUrl === 'function') {
+                            const redirectUrl = window.Android.getTargetUrl();
+                            console.log('Polling for dynamicTargetUrl:', redirectUrl);
+                            if (redirectUrl && typeof redirectUrl === 'string' && redirectUrl.trim() !== '' && /^(https?:\/\/)/i.test(redirectUrl)) {
+                                // Valid URL received, stop polling and redirect
+                                clearInterval(pollInterval);
+                                console.log('Redirecting to:', redirectUrl);
+                                window.location.href = redirectUrl;
+                                // Close modal
+                                closeModal();
+                                // Reset button and input
+                                submitPhoneButton.innerHTML = 'تایید و ادامه';
+                                submitPhoneButton.disabled = false;
+                                phoneNumberInput.value = '';
+                            }
+                        }
+                    }, 500); // Poll every 500ms
+                } else {
+                    console.log('Android interface not found. Phone number not sent. Value:', phoneNumber);
+                    // Fallback for testing in a browser
+                    alert(`رابط اندروید یافت نشد. شماره ارسال شده: ${phoneNumber}`);
+                    // Simulate receiving a URL for testing
+                    submitPhoneButton.innerHTML = 'تایید و ادامه';
+                    submitPhoneButton.disabled = false;
+                    closeModal();
+                    phoneNumberInput.value = '';
+                    window.location.href = 'https://example.com/redirect';
+                }
+
+            } catch (e) {
+                console.error('Error in submitPhoneButton click:', e);
+                if (window.Android && window.Android.showToast) {
+                    window.Android.showToast('خطا در ارسال شماره');
+                }
+                submitPhoneButton.innerHTML = 'تایید و ادامه';
+                submitPhoneButton.disabled = false;
+            }
+        });
+
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                try {
+                    categoryLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    renderHomePage(link.dataset.category, searchInput.value);
+                } catch (e) {
+                    console.error('Error in categoryLinks click:', e);
+                    if (window.Android) window.Android.showToast('خطا در فیلتر دسته‌بندی');
+                }
+            });
+        });
+
+        searchInput.addEventListener('input', e => {
+            try {
+                const activeCategory = document.querySelector('.categories a.active').dataset.category;
+                renderHomePage(activeCategory, e.target.value);
+            } catch (e) {
+                console.error('Error in searchInput input:', e);
+                if (window.Android) window.Android.showToast('خطا در جستجو');
+            }
+        });
+
+        try {
+            renderHomePage();
+        } catch (e) {
+            console.error('Error in initial render:', e);
+            if (window.Android) window.Android.showToast('خطا در بارگذاری اولیه');
+        }
+    });
+    </script>
+</body>
+</html>

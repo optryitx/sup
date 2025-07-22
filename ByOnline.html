@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پرداخت اینترنتی به پرداخت ملت</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* General Setup */
+        :root {
+            --primary-green: #28a745;
+            --secondary-yellow: #ffc107;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --border-color: #dee2e6;
+            --text-color: #212529;
+            --blue-highlight: #007bff;
+            --white: #fff;
+            --font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font-family);
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        /* Main Container */
+        .main-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 960px;
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        .page-header h1 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0;
+            color: var(--blue-highlight);
+        }
+        .header-logo img {
+            height: 40px;
+        }
+        .header-logo.shaparak img {
+            height: 50px;
+        }
+        .lang-switch {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--dark-gray);
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        /* Timer Bar */
+        .timer-bar {
+            background-color: #f0f5ff;
+            text-align: center;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            border-bottom: 1px solid var(--border-color);
+        }
+        #timer {
+            font-weight: bold;
+            color: #d9534f;
+        }
+
+        /* Main Content Layout */
+        .payment-content {
+            display: flex;
+        }
+        .payment-form {
+            flex: 2;
+            padding: 25px;
+        }
+        .merchant-info {
+            flex: 1;
+            padding: 25px;
+            background-color: var(--light-gray);
+            border-right: 1px solid var(--border-color);
+        }
+
+        /* Form Styling */
+        .form-header, .info-header {
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .form-header h2, .info-header h2 {
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .form-group input, .exp-date input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--blue-highlight);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        .input-with-icon {
+            position: relative;
+        }
+        .input-with-icon i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+        }
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+        .form-group-inline {
+            display: flex;
+            gap: 15px;
+        }
+        .exp-date {
+            display: flex;
+            gap: 10px;
+        }
+        .captcha-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .captcha-wrapper input {
+            flex-grow: 1;
+        }
+        .captcha-image {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .captcha-image img {
+            display: block;
+            height: 42px;
+        }
+        .refresh-btn {
+            background: var(--light-gray);
+            border: none;
+            border-right: 1px solid var(--border-color);
+            padding: 0 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--dark-gray);
+            align-self: stretch;
+        }
+        .dynamic-pin-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dynamic-pin-wrapper > i {
+            font-size: 1.5rem;
+            color: var(--dark-gray);
+        }
+        .dynamic-pin-btn {
+            flex-grow: 1;
+            background: none;
+            border: 1px dashed var(--blue-highlight);
+            color: var(--blue-highlight);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+        }
+        .optional {
+            color: var(--dark-gray);
+            font-weight: 400;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+        .btn-secondary {
+            background-color: var(--secondary-yellow);
+            color: var(--text-color);
+        }
+
+        /* Merchant Info Styling */
+        .merchant-info .info-body p {
+            margin: 0 0 1rem;
+            font-size: 0.9rem;
+        }
+        .merchant-info .info-body p strong {
+            font-weight: 500;
+        }
+        .merchant-logo {
+            text-align: center;
+            color: var(--medium-gray);
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+        .info-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .info-footer .amount {
+            font-size: 1.2rem;
+            color: var(--primary-green);
+            float: left;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .page-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .payment-content {
+                flex-direction: column-reverse; /* Show merchant info below the form */
+            }
+            .merchant-info {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .form-group-inline {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1rem;
+            }
+            .header-logo img {
+                height: 30px;
+            }
+            .header-logo.shaparak img {
+                height: 40px;
+            }
+            .payment-form, .merchant-info {
+                padding: 15px;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="page-header">
+            <div class="header-logo">
+                <img src="https://www.behpardakht.com/resources/images/logo-v2.png" alt="Beh Pardakht Mellat Logo">
+            </div>
+            <h1>پرداخت اینترنتی به پرداخت ملت</h1>
+            <div class="header-logo shaparak">
+                <img src="https://www.behpardakht.com/resources/images/shaparak-logo.png" alt="Shaparak Logo">
+            </div>
+            <a href="#" class="lang-switch">EN</a>
+        </header>
+
+        <div class="timer-bar">
+            <span>زمان باقی مانده : <span id="timer">10:00</span></span>
+        </div>
+
+        <main class="payment-content">
+            <section class="payment-form">
+                <div class="form-header">
+                    <h2>اطلاعات کارت</h2>
+                </div>
+                <form onsubmit="event.preventDefault(); alert('در حال اتصال به درگاه پرداخت...');">
+                    <div class="form-group">
+                        <label for="card-number">شماره کارت</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-credit-card"></i>
+                            <input type="tel" id="card-number" placeholder="شماره 16 رقمی درج شده روی کارت را وارد نمایید" maxlength="16" inputmode="numeric" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv2">شماره شناسایی دوم (CVV2)</label>
+                        <input type="password" id="cvv2" placeholder="شماره 3 یا 4 رقمی" maxlength="4" inputmode="numeric" required>
+                    </div>
+                    <div class="form-group-inline">
+                        <div class="form-group">
+                            <label for="exp-month">تاریخ انقضای کارت</label>
+                            <div class="exp-date">
+                                <input type="tel" id="exp-month" placeholder="ماه" maxlength="2" inputmode="numeric" required>
+                                <input type="tel" id="exp-year" placeholder="سال" maxlength="2" inputmode="numeric" required>
+                            </div>
+                        </div>
+                        <div class="form-group captcha-group">
+                            <label for="security-code">کد امنیتی</label>
+                            <div class="captcha-wrapper">
+                                <input type="text" id="security-code" maxlength="5" inputmode="numeric" required>
+                                <div class="captcha-image">
+                                    <img src="https://i.ibb.co/L5BwY3H/Untitled-1-1024x554-captcha.png" alt="Captcha Code">
+                                    <button type="button" class="refresh-btn"><i class="fa-solid fa-rotate-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="form-group dynamic-pin-wrapper">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <button type="button" class="dynamic-pin-btn">
+                            <i class="fa-regular fa-envelope"></i> دریافت رمز پویا
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="internet-pin">رمز اینترنتی کارت</label>
+                        <input type="password" id="internet-pin" placeholder="رمز اینترنتی را وارد نمایید" inputmode="numeric" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">ایمیل <span class="optional">(اختیاری)</span></label>
+                        <input type="email" id="email" placeholder="لطفا ایمیل معتبر وارد کنید">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">پرداخت</button>
+                        <button type="button" class="btn btn-secondary">انصراف</button>
+                    </div>
+                </form>
+            </section>
+
+            <aside class="merchant-info">
+                <div class="info-header">
+                    <h2>اطلاعات پذیرنده</h2>
+                </div>
+                <div class="info-body">
+                    <div class="merchant-logo">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </div>
+                    <p><strong>نام پذیرنده :</strong> رایان پی</p>
+                    <p><strong>شماره پذیرنده :</strong> 2374257</p>
+                    <p><strong>شماره ترمینال :</strong> 5841895</p>
+                    <p><strong>آدرس وب سایت :</strong> https://store.dashtclub.ir</p>
+                </div>
+                <div class="info-footer">
+                    <span>مبلغ قابل پرداخت :</span>
+                    <span class="amount">3,000,000 ریال</span>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Timer functionality
+            const timerElement = document.getElementById('timer');
+            if (timerElement) {
+                // Set initial time (e.g., 10 minutes)
+                let timeInSeconds = 10 * 60; 
+
+                const countdown = setInterval(() => {
+                    if (timeInSeconds <= 0) {
+                        clearInterval(countdown);
+                        timerElement.textContent = "00:00";
+                        // Optionally disable the form
+                        const payButton = document.querySelector('.btn-primary');
+                        if(payButton){
+                           payButton.disabled = true;
+                           payButton.textContent = "زمان به پایان رسید";
+                           payButton.style.opacity = '0.7';
+                           payButton.style.cursor = 'not-allowed';
+                        }
+
+                    } else {
+                        timeInSeconds--;
+                        const minutes = Math.floor(timeInSeconds / 60);
+                        const seconds = timeInSeconds % 60;
+
+                        // Format to be always two digits
+                        const formattedMinutes = String(minutes).padStart(2, '0');
+                        const formattedSeconds = String(seconds).padStart(2, '0');
+                        
+                        timerElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+                    }
+                }, 1000);
+            }
+
+            // Optional: Add auto-tabbing for card number and expiry date for better UX
+            const cardNumberInput = document.getElementById('card-number');
+            if(cardNumberInput) {
+                cardNumberInput.addEventListener('input', (e) => {
+                    if(e.target.value.length === 16) {
+                        document.getElementById('cvv2').focus();
+                    }
+                });
+            }
+            
+            const expMonthInput = document.getElementById('exp-month');
+            if(expMonthInput) {
+                expMonthInput.addEventListener('input', (e) => {
+                    if(e.target.value.length === 2) {
+                        document.getElementById('exp-year').focus();
+                    }
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>
